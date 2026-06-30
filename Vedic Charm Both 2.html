@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Vedic Charm Consultation</title>
+<style>
+  :root{
+    --accent:#4CAF50; --accent-dark:#45a049; --danger:#e74c3c;
+    --bg:#f4f4f4; --card:#fff; --text:#222;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%}
+  body{
+    font-family: "Segoe UI", Roboto, Arial, sans-serif;
+    margin:0; padding:0;
+    background:var(--bg);
+    color:var(--text);
+    -webkit-font-smoothing:antialiased;
+    -moz-osx-font-smoothing:grayscale;
+    transition:background .25s,color .25s;
+    font-size:18px;
+    line-height:1.5;
+  }
+  body.dark{ background:#0f0f10; color:#eee; }
+
+  header{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:14px 20px; background:var(--accent); color:#fff;
+    position:sticky; top:0; z-index:20;
+  }
+  body.dark header{ background:#333; }
+  h1{ margin:0; font-size:22px; }
+
+  .app { max-width:1100px; margin:18px auto; padding:12px; min-height: calc(100vh - 72px); }
+
+  /* PAGE SYSTEM */
+  .page { display:none; opacity:0; transform: translateY(8px); transition: opacity .35s ease, transform .35s ease; }
+  .page.show { display:block; }
+  .page.enter { opacity:1; transform:none; }
+
+  .centered { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:18px; }
+
+  .home-card{ background:var(--card); border-radius:12px; padding:36px; box-shadow:0 12px 30px rgba(0,0,0,0.06); text-align:center; }
+  .big-btn{ background:var(--accent); color:#fff; border:none; padding:14px 28px; border-radius:10px; font-size:18px; cursor:pointer; box-shadow:0 6px 16px rgba(0,0,0,0.08); }
+  .big-btn:hover{ background:var(--accent-dark); transform:translateY(-2px); }
+
+  .container{ display:grid; grid-template-columns:1fr 2fr 1fr; gap:18px; padding:18px 0; align-items:start; }
+  .card{ background:var(--card); border-radius:12px; padding:18px; box-shadow:0 8px 22px rgba(0,0,0,0.06); }
+  body.dark .card{ background:#141414; color:#eee; }
+
+  h2{ margin:0 0 10px 0; font-size:20px; }
+
+  input,select,textarea{ width:100%; padding:12px; margin:8px 0 12px 0; border-radius:10px; border:1px solid #ddd; font-size:17px; }
+  textarea{ min-height:110px; resize:vertical; }
+
+  .small-btn{ padding:10px 14px; border-radius:10px; border:none; background:var(--accent); color:#fff; font-size:16px; cursor:pointer; }
+  .small-btn:hover{ background:var(--accent-dark); transform:translateY(-1px); }
+
+  .chat-box{ height:520px; overflow-y:auto; border-radius:12px; padding:18px; background:#fafafa; border:1px solid #e6e6e6; font-size:18px; }
+  body.dark .chat-box{ background:#141414; border-color:#2a2a2a; }
+  .msg{ margin:12px 0; padding:12px 16px; border-radius:12px; display:inline-block; max-width:84%; font-size:18px; line-height:1.6; white-space:pre-wrap;}
+  .user{ background:#dff7df; float:right; clear:both; }
+  .bot{ background:#f3f3f3; float:left; clear:both; }
+  body.dark .user{ background:#1f5c2e; color:#fff; }
+  body.dark .bot{ background:#2a2a2a; color:#fff; }
+
+  .option-buttons{ display:flex; gap:12px; margin-top:14px; }
+  .option-buttons button{ flex:1; padding:12px 14px; font-size:18px; border-radius:10px; border:none; cursor:pointer; color:#fff; }
+  .opt-yes{ background:#2e7d32; }
+  .opt-no{ background:#b71c1c; }
+  .opt-sometimes{ background:#f0ad4e; }
+
+  .summary-card{ margin-top:12px; padding:18px; border-radius:10px; background:linear-gradient(180deg,#fff,#fbfbfb); box-shadow:0 8px 24px rgba(0,0,0,0.06); font-size:18px; }
+  body.dark .summary-card{ background:linear-gradient(180deg,#151515,#0f0f0f); color:#eee; }
+  .summary-card h3{ margin:0 0 12px 0; font-size:20px; }
+  .summary-card p{ margin:12px 0; font-size:18.5px; text-align:justify; }
+
+  .danger-btn{ background:var(--danger); color:#fff; border:none; padding:12px 16px; border-radius:10px; font-size:18px; cursor:pointer; margin-top:12px; }
+  .danger-btn:hover{ filter:brightness(.95); transform:translateY(-1px); }
+
+  .auth-card{ max-width:520px; margin:30px auto; }
+
+  @media (max-width:980px){
+    .container{ grid-template-columns: 1fr; }
+    .chat-box{ height:420px; }
+    .home-card{ padding:28px; }
+  }
+  @media (max-width:480px){
+    body{ font-size:16px; }
+    h1{ font-size:20px; }
+    .big-btn{ font-size:16px; padding:12px 20px; }
+    .summary-card p{ font-size:16px; }
+  }
+</style>
+</head>
+<body>
+<header>
+  <h1>🌿 Vedic Charm</h1>
+  <div>
+    <button class="small-btn" onclick="toggleDark()" aria-label="Toggle dark mode">🌙 Toggle</button>
+  </div>
+</header>
+
+<div class="app">
+
+  <!-- HOME -->
+  <section id="home" class="page show enter" aria-labelledby="homeTitle">
+    <div class="home-card centered">
+      <h2 id="homeTitle" style="font-size:24px;">Welcome to Vedic Charm</h2>
+      <div style="display:flex; gap:16px; flex-wrap:wrap; justify-content:center; margin-top:8px;">
+        <button class="big-btn" id="btnLogin" type="button">Login</button>
+        <button class="big-btn" id="btnSignup" type="button">Sign In</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- LOGIN -->
+  <section id="login" class="page" aria-labelledby="loginTitle">
+    <div class="auth-card">
+      <div class="card">
+        <h2 id="loginTitle">Login</h2>
+        <label>Enter your email or username</label>
+        <input id="login-username" type="text" placeholder="Email or Username" autocomplete="off">
+        <label>Password</label>
+        <input id="login-password" type="password" placeholder="Password" autocomplete="off">
+        <div style="display:flex; gap:12px; margin-top:14px;">
+          <button class="small-btn" id="loginSubmit" type="button">Login</button>
+          <button class="small-btn" id="loginBack" type="button">Back</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SIGNUP -->
+  <section id="signup" class="page" aria-labelledby="signupTitle">
+    <div class="auth-card">
+      <div class="card">
+        <h2 id="signupTitle">Sign In</h2>
+        <label>Full Name</label>
+        <input id="signup-name" type="text" placeholder="Full Name" autocomplete="off">
+        <label>Email or Username</label>
+        <input id="signup-email" type="text" placeholder="Email or Username" autocomplete="off">
+        <label>Password</label>
+        <input id="signup-password" type="password" placeholder="Password" autocomplete="off">
+        <div style="display:flex; gap:12px; margin-top:14px;">
+          <button class="small-btn" id="signupSubmit" type="button">Sign In</button>
+          <button class="small-btn" id="signupBack" type="button">Back</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CONSULTATION -->
+  <section id="consult" class="page" aria-labelledby="consultTitle">
+    <div class="container">
+      <div class="card">
+        <h2 id="consultTitle">Patient Information</h2>
+        <form id="patientForm" class="form">
+          <label>Name</label>
+          <input id="name" type="text" placeholder="Name" required>
+          <label>Age</label>
+          <input id="age" type="number" placeholder="Age" required>
+          <label>Gender</label>
+          <select id="gender"><option>Male</option><option>Female</option><option>Other</option></select>
+          <label>Describe your problem</label>
+          <textarea id="problem" placeholder="Describe your problem"></textarea>
+          <button type="submit" class="small-btn" id="startConsultBtn">Start Consultation</button>
+        </form>
+      </div>
+
+      <div class="card" aria-live="polite">
+        <h2>Consultation Chat</h2>
+        <div id="chatBox" class="chat-box" role="log" aria-live="polite"></div>
+        <div id="options" style="margin-top:12px;"></div>
+      </div>
+
+      <div class="card">
+        <h2>Features</h2>
+        <ul style="font-size:18px; line-height:1.6;">
+          <li>🌿 Friendly professional Ayurvedic-style summaries</li>
+          <li>✅ One question at a time (Yes / No / Sometimes)</li>
+          <li>🔁 Restart Consultation clears all data and returns home</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<script>
+/* -------------------------
+   Page navigation and init
+   ------------------------- */
+const pages = ['home','login','signup','consult'];
+let currentPage = 'home';
+let inTransition = false;
+
+function navigateTo(id){
+  if(inTransition) return;
+  if(id === currentPage) return;
+  const from = document.getElementById(currentPage);
+  const to = document.getElementById(id);
+  if(!from || !to) return;
+  inTransition = true;
+  // show destination
+  to.classList.add('show');
+  requestAnimationFrame(()=>{
+    from.classList.remove('enter');
+    to.classList.add('enter');
+  });
+  setTimeout(()=>{
+    pages.forEach(pid=>{
+      const el = document.getElementById(pid);
+      if(!el) return;
+      if(pid === id){
+        el.classList.add('show','enter');
+        el.style.display = 'block';
+      } else {
+        el.classList.remove('show','enter');
+        el.style.display = 'none';
+      }
+    });
+    currentPage = id;
+    inTransition = false;
+    window.scrollTo({top:0,behavior:'smooth'});
+  }, 360);
+}
+
+// initial visibility
+pages.forEach(pid=>{
+  const el = document.getElementById(pid);
+  if(!el) return;
+  if(pid === currentPage){
+    el.style.display = 'block';
+    el.classList.add('show','enter');
+  } else {
+    el.style.display = 'none';
+    el.classList.remove('show','enter');
+  }
+});
+
+function toggleDark(){ document.body.classList.toggle('dark'); }
+
+/* -------------------------
+   Elements
+   ------------------------- */
+const btnLogin = document.getElementById('btnLogin');
+const btnSignup = document.getElementById('btnSignup');
+const loginSubmit = document.getElementById('loginSubmit');
+const loginBack = document.getElementById('loginBack');
+const signupSubmit = document.getElementById('signupSubmit');
+const signupBack = document.getElementById('signupBack');
+const startConsultBtn = document.getElementById('startConsultBtn');
+
+btnLogin.addEventListener('click', ()=> navigateTo('login'));
+btnSignup.addEventListener('click', ()=> navigateTo('signup'));
+loginBack.addEventListener('click', ()=> navigateTo('home'));
+signupBack.addEventListener('click', ()=> navigateTo('home'));
+
+/* Login/Signup submit navigates to consult and focuses the form */
+loginSubmit.addEventListener('click', ()=> {
+  navigateTo('consult');
+  setTimeout(()=> document.getElementById('name')?.focus(), 420);
+});
+signupSubmit.addEventListener('click', ()=> {
+  navigateTo('consult');
+  setTimeout(()=> document.getElementById('name')?.focus(), 420);
+});
+
+/* -------------------------
+   Consultation logic
+   ------------------------- */
+const chatBox = document.getElementById('chatBox');
+const optionsBox = document.getElementById('options');
+
+let patient = {};
+let step = 0;
+let selectedQuestions = [];
+
+/* 5 question banks, 10 yes/no-style questions each */
+const questionBanks = [
+  ["Do you feel your digestion is irregular lately (bloating, slow digestion)?","Have you noticed a recent change in your appetite?","Do you often feel tired by mid-afternoon?","Are your sleeping hours inconsistent or interrupted?","Do you experience frequent gas or heaviness after meals?","Do you often skip meals or eat at irregular times?","Have you had more anxiety or restlessness than usual?","Do you wake up feeling unrefreshed most mornings?","Do you frequently consume cold drinks with meals?","Do you feel your overall energy has reduced in recent weeks?"],
+  ["Do you notice irritability or a quick temper more often than before?","Have you experienced heartburn or acidity recently?","Do you feel overheated or have excessive sweating at times?","Are there times you feel excessively thirsty during the day?","Do you frequently eat spicy or fried food?","Do you find it hard to relax after work?","Do you have trouble falling asleep due to thoughts racing?","Have you been skipping light physical activity regularly?","Do you experience frequent headaches related to stress?","Have you noticed changes in your bowel patterns recently?"],
+  ["Do you feel dry skin, cracking lips, or dry hair more than usual?","Are there days when your hands or feet feel cold and restless?","Do you often feel lightheaded or dizzy occasionally?","Have you experienced sudden changes in mood or forgetfulness?","Do you often feel uneasy in social or work situations?","Do you avoid heavy meals and prefer light foods most days?","Do you often feel low motivation for daily tasks?","Do you experience sensitivity to noise or bright lights sometimes?","Have you experienced sudden appetite loss recently?","Do you notice tension in your neck or shoulders frequently?"],
+  ["Do you have a tendency to eat late at night regularly?","Have you noticed swelling or puffiness that comes and goes?","Do you feel your breathing is shallow or hurried at times?","Do you often reach for caffeinated drinks during the day?","Have you been under notable pressure at work or home recently?","Do you experience acidity or a burning sensation in the chest?","Do you take any herbal or over-the-counter supplements regularly?","Do you experience seasonal aggravations like cough or heaviness?","Have you noticed weight changes without deliberate diet changes?","Do you find it hard to maintain a calm routine most days?"],
+  ["Do you feel that weather or season affects your symptoms?","Have you been traveling or sleeping in different places lately?","Do you experience sudden cravings for salty or sweet foods?","Do you find it difficult to have regular meal timings?","Are you often skipping water intake and feeling dehydrated?","Do you feel your concentration drops after midday?","Have you been feeling overwhelmed by responsibilities recently?","Do you feel your digestion worsens with certain foods?","Do you take short naps frequently during the day?","Do you feel more sensitive to changes in routine or schedule?"]
+];
+
+/* 5 friendly-professional 3-paragraph summaries */
+const summaries = [
+  p => ({ title: "🩺 Doctor’s Summary", paras: [
+    `Thank you, ${p.name}. Your answers point to mild disruption of daily rhythm — often related to irregular meals and sleep. When meal timing and rest vary, digestion slows and daytime energy can fall. Recognizing these patterns is an important first step toward restoring balance.`,
+    `Practical steps that usually help include warming and regular meals, a gentle evening routine to support deeper sleep, and short breathing exercises each morning and evening. These small habits nurture digestion, calm the nervous system, and steadily improve energy throughout the day.`,
+    `Over the next few weeks, try gentle walks, consistent meal windows, and reducing late-night stimulants. Notice how small regular changes affect your comfort — if symptoms persist or worsen, consider an in-person assessment to tailor herbal and lifestyle support.` ] }),
+  p => ({ title: "🩺 Doctor’s Summary", paras: [
+    `Hello ${p.name}. Your pattern suggests digestive and stress-related contributors — irregular eating, occasional stimulants, and disrupted nights. These causes commonly produce internal heat and tension that show as restlessness and disturbed digestion.`,
+    `A balanced approach works best: favor warm, easily digestible meals, reduce spicy/fried foods, and introduce short calming practices such as pranayama or a brief evening meditation. Hydration with warm water and herbal teas supports digestive tone.`,
+    `Implement small, consistent steps: schedule meals, avoid screens before bed, and include moments of mindful breathing. These changes typically reduce acidity, enhance sleep quality, and improve overall resilience. If concerns persist, seek personalized guidance.` ] }),
+  p => ({ title: "🩺 Doctor’s Summary", paras: [
+    `Dear ${p.name}, many of your responses reflect a tendency toward restlessness and dryness — commonly seen with irregular routine and stress. This can manifest as lightheadedness, dryness, or difficulty focusing at times.`,
+    `Gentle, grounding measures are recommended: warm, nourishing breakfasts, short daily self-massage when possible, and restful evening rituals. Prioritizing hydration and simple, consistent movements can steadily rebalance energy and reduce tension.`,
+    `Start small — commit to two or three consistent habits (for example, warm morning drink, 10 minutes of breathwork, a set sleep time) and assess changes after a fortnight. If symptoms continue, consider a deeper, in-person evaluation.` ] }),
+  p => ({ title: "🩺 Doctor’s Summary", paras: [
+    `Hi ${p.name}, your answers suggest the role of late meals, stimulants, and workload in your current symptoms. These factors can overstimulate digestion and interfere with restful sleep, contributing to daytime fatigue and occasional acidity.`,
+    `To support recovery, reduce late-night eating and caffeine, add cooling and balancing foods where appropriate, and create a consistent wind-down routine each evening. Gentle yoga or breathing practices help calm digestion and the nervous system.`,
+    `Moderate regular activity and a focus on warm, easy-to-digest meals will generally improve symptoms. If digestive discomfort or sleep disturbance remain, seek closer, individualized advice from a practitioner.` ] }),
+  p => ({ title: "🩺 Doctor’s Summary", paras: [
+    `Hello ${p.name}, your responses show a mix of lifestyle stress and occasional dietary triggers affecting mood and digestion. This often results in fluctuating energy and difficulty maintaining focus across the day.`,
+    `Begin with regular hydration, avoid very late meals, and choose grounding breakfasts that provide steady energy. A brief morning anchoring practice (five to ten minutes of breath awareness) can reduce reactivity and set a calmer tone for the day.`,
+    `Over time, prioritize consistency — same meal windows, a soothing bedtime routine, and rest when needed. These habits support gradual restoration of digestive comfort and emotional balance; for persistent issues, consider a face-to-face consultation.` ] })
+];
+
+/* Utility: add message */
+function addMessage(text, sender='bot'){
+  const el = document.createElement('div');
+  el.className = 'msg ' + sender;
+  el.textContent = text;
+  chatBox.appendChild(el);
+  chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+/* show Yes/No/Sometimes options */
+function showOptions(){
+  optionsBox.innerHTML = '';
+  const wrap = document.createElement('div'); wrap.className = 'option-buttons';
+  const yes = document.createElement('button'); yes.className='opt-yes'; yes.textContent='Yes';
+  const no = document.createElement('button'); no.className='opt-no'; no.textContent='No';
+  const sometimes = document.createElement('button'); sometimes.className='opt-sometimes'; sometimes.textContent='Sometimes';
+  yes.onclick = ()=> handleAnswer('Yes'); no.onclick = ()=> handleAnswer('No'); sometimes.onclick = ()=> handleAnswer('Sometimes');
+  wrap.appendChild(yes); wrap.appendChild(no); wrap.appendChild(sometimes);
+  optionsBox.appendChild(wrap);
+}
+
+/* Start consultation */
+function startConsultation(){
+  chatBox.innerHTML = ''; optionsBox.innerHTML = '';
+  step = 0;
+  selectedQuestions = questionBanks[Math.floor(Math.random()*questionBanks.length)];
+  addMessage(`Hello ${patient.name}! Let's begin your Ayurvedic consultation.`, 'bot');
+  setTimeout(()=> { addMessage(selectedQuestions[step], 'bot'); showOptions(); }, 650);
+}
+
+/* Handle answer */
+function handleAnswer(answer){
+  addMessage(answer, 'user');
+  optionsBox.innerHTML = '';
+  if(step < selectedQuestions.length - 1){
+    step++;
+    setTimeout(()=> { addMessage(selectedQuestions[step], 'bot'); showOptions(); }, 700);
+  } else {
+    setTimeout(showSummary, 800);
+  }
+}
+
+/* Show summary card */
+function showSummary(){
+  const S = summaries[Math.floor(Math.random()*summaries.length)](patient);
+  addMessage('✅ Consultation complete. Here is your summary:', 'bot');
+
+  const wrapper = document.createElement('div');
+  wrapper.className = 'msg bot';
+  wrapper.style.display = 'block';
+  wrapper.style.maxWidth = '100%';
+  wrapper.style.padding = '0';
+
+  const card = document.createElement('div');
+  card.className = 'summary-card';
+  const title = document.createElement('h3'); title.textContent = S.title;
+  card.appendChild(title);
+  S.paras.forEach(pText=>{
+    const p = document.createElement('p'); p.textContent = pText;
+    card.appendChild(p);
+  });
+
+  wrapper.appendChild(card);
+  chatBox.appendChild(wrapper);
+  chatBox.scrollTop = chatBox.scrollHeight;
+
+  optionsBox.innerHTML = '';
+  const restart = document.createElement('button');
+  restart.className = 'danger-btn';
+  restart.textContent = 'Restart Consultation';
+  restart.onclick = resetAll;
+  optionsBox.appendChild(restart);
+}
+
+/* Reset everything and go home */
+function resetAll(){
+  // clear UI
+  chatBox.innerHTML = '';
+  optionsBox.innerHTML = '';
+  // clear forms
+  document.getElementById('patientForm').reset();
+  document.getElementById('login-username').value = '';
+  document.getElementById('login-password').value = '';
+  document.getElementById('signup-name').value = '';
+  document.getElementById('signup-email').value = '';
+  document.getElementById('signup-password').value = '';
+  // clear in-memory data
+  patient = {};
+  step = 0;
+  selectedQuestions = [];
+  // go to home
+  navigateTo('home');
+}
+
+/* Patient form submit */
+document.getElementById('patientForm').addEventListener('submit', function(e){
+  e.preventDefault();
+  patient = {
+    name: document.getElementById('name').value || 'Guest',
+    age: document.getElementById('age').value || '',
+    gender: document.getElementById('gender').value || '',
+    problem: document.getElementById('problem').value || ''
+  };
+  startConsultation();
+});
+
+/* Keyboard submit for auth pages: Enter triggers navigation to consultation */
+document.getElementById('login-username').addEventListener('keydown', e=>{ if(e.key==='Enter'){ navigateTo('consult'); setTimeout(()=>document.getElementById('name')?.focus(),400);} });
+document.getElementById('login-password').addEventListener('keydown', e=>{ if(e.key==='Enter'){ navigateTo('consult'); setTimeout(()=>document.getElementById('name')?.focus(),400);} });
+document.getElementById('signup-name').addEventListener('keydown', e=>{ if(e.key==='Enter'){ navigateTo('consult'); setTimeout(()=>document.getElementById('name')?.focus(),400);} });
+document.getElementById('signup-email').addEventListener('keydown', e=>{ if(e.key==='Enter'){ navigateTo('consult'); setTimeout(()=>document.getElementById('name')?.focus(),400);} });
+
+/* Focus helper on navigation */
+function focusOnPage(id){
+  setTimeout(()=>{
+    if(id === 'login') document.getElementById('login-username')?.focus();
+    if(id === 'signup') document.getElementById('signup-name')?.focus();
+    if(id === 'consult') document.getElementById('name')?.focus();
+  }, 420);
+}
+
+/* Ensure buttons on home navigate correctly and set focus */
+document.getElementById('btnLogin').addEventListener('click', ()=> { navigateTo('login'); focusOnPage('login'); });
+document.getElementById('btnSignup').addEventListener('click', ()=> { navigateTo('signup'); focusOnPage('signup'); });
+
+/* Hook Back buttons on auth pages */
+document.getElementById('loginBack').addEventListener('click', ()=> { navigateTo('home'); focusOnPage('home'); });
+document.getElementById('signupBack').addEventListener('click', ()=> { navigateTo('home'); focusOnPage('home'); });
+
+/* Also hook login/signup submit buttons (they go to consult) */
+document.getElementById('loginSubmit').addEventListener('click', ()=> { navigateTo('consult'); focusOnPage('consult'); });
+document.getElementById('signupSubmit').addEventListener('click', ()=> { navigateTo('consult'); focusOnPage('consult'); });
+
+</script>
+</body>
+</html>
